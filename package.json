@@ -1,0 +1,26 @@
+{
+  "name": "clearhead",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "dependencies": {
+    "drizzle-orm": "0.45.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace=@clearhead/web",
+    "dev:extension": "npm run dev --workspace=@clearhead/extension",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=@clearhead/web",
+    "build:extension": "npm run build --workspace=@clearhead/extension",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace=@clearhead/extension",
+    "db:generate": "npm run db:generate --workspace=@clearhead/database",
+    "db:migrate": "npm run db:migrate --workspace=@clearhead/database",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "engines": { "node": ">=20.9.0" }
+}

@@ -1,0 +1,14 @@
+node_modules/
+node_modules.incomplete/
+build/
+.plasmo/
+.next/
+.env
+.env.local
+!.env.example
+drizzle/meta/_journal.json.bak
+test-results/
+playwright-report/
+screenshots/
+test-artifacts/
+*.log

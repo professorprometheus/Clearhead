@@ -1,0 +1,10 @@
+import { subscription } from "@clearhead/database/schema"
+import { desc, eq } from "drizzle-orm"
+import Link from "next/link"
+import { BillingActions } from "@/components/AccountActions"
+import { db } from "@/lib/server-db"
+import { entitlementForUser } from "@/lib/entitlements"
+import { requireSession } from "@/lib/session"
+
+export default async function BillingPage(){const session=await requireSession();const entitlement=await entitlementForUser(session.user.id);const [sub]=await db.select().from(subscription).where(eq(subscription.referenceId,session.user.id)).orderBy(desc(subscription.periodEnd)).limit(1);return <div className="space-y-6"><div><p className="eyebrow">Plan and payments</p><h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">Your plan</h1></div><div className="web-card"><div className="grid gap-4 sm:grid-cols-2"><Datum label="Current plan" value={entitlement.plan==="trial"?"Clearhead Pro trial":entitlement.plan==="pro"?"Clearhead Pro":"Clearhead Free"}/><Datum label="Status" value={entitlement.status.replaceAll("_"," ")}/><Datum label="Trial ends" value={entitlement.trialEndsAt?new Date(entitlement.trialEndsAt).toLocaleDateString("en-GB"):"Not scheduled"}/><Datum label="Next payment" value={entitlement.currentPeriodEnd?new Date(entitlement.currentPeriodEnd).toLocaleDateString("en-GB"):"Not scheduled"}/><Datum label="Billing cycle" value={entitlement.billingInterval??"Not applicable"}/><Datum label="Renewal" value={entitlement.cancelAtPeriodEnd?"Ends after this period":"Renews automatically"}/></div><div className="mt-6 border-t border-slate-200 pt-6">{entitlement.plan==="pro"?<BillingActions subscriptionId={sub?.id} cancelAtPeriodEnd={!!sub?.cancelAtPeriodEnd}/>:<Link href="/pricing" className="web-button">Explore Clearhead Pro</Link>}</div></div></div>}
+function Datum({label,value}:{label:string;value:string}){return <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-1.5 capitalize text-sm font-medium text-slate-900">{value}</p></div>}

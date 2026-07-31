@@ -1,0 +1,54 @@
+{
+  "name": "@clearhead/extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turn open tabs into finished work.",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "test": "vitest run",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:headed": "npm run build && playwright test --headed",
+    "verify": "npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e"
+  },
+  "dependencies": {
+    "@clearhead/entitlements": "*",
+    "@clearhead/shared": "*",
+    "better-auth": "^1.4.18",
+    "lucide-react": "^1.26.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "postcss": "^8.4.49",
+    "plasmo": "^0.90.5",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
+  },
+  "manifest": {
+    "manifest_version": 3,
+    "name": "Clearhead",
+    "description": "Bring the right tabs forward, put distractions away and return with your next step ready.",
+    "version": "1.0.0",
+    "permissions": ["tabs", "tabGroups", "storage", "sidePanel", "alarms", "notifications", "declarativeNetRequest", "webNavigation"],
+    "host_permissions": ["http://*/*", "https://*/*"],
+    "web_accessible_resources": [
+      {
+        "resources": ["tabs/blocked.html"],
+        "matches": ["http://*/*", "https://*/*"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+import { Loader2, X } from "lucide-react"
+import { useEffect, useState } from "react"
+import { TabPickerRow } from "~/components/TabPickerRow"
+import { MAX_SESSION_NAME_LENGTH } from "~/lib/validation"
+import type { TabCandidate } from "~/types/messages"
+import { send } from "~/types/messages"
+
+export function SessionCapture({ workspaceId, park, onDone, onCancel }: { workspaceId: string; park: boolean; onDone: (message: string) => void; onCancel: () => void }) {
+  const [tabs,setTabs]=useState<TabCandidate[]>([]),[selected,setSelected]=useState<number[]>([]),[name,setName]=useState(""),[busy,setBusy]=useState(true),[error,setError]=useState("")
+  useEffect(()=>{send<TabCandidate[]>({type:"GET_TABS"}).then((response)=>{if(response.ok){setTabs(response.data);setSelected(response.data.map(tab=>tab.tabId))}else setError(response.error);setBusy(false)})},[])
+  async function submit(){setError("");setBusy(true);const response=await send({type:"SAVE_SESSION",workspaceId,name,tabIds:selected,park});setBusy(false);if(response.ok)onDone(response.message||"Done.");else setError(response.error)}
+  return <section className="capture-panel stack" aria-label={park?"Park tabs":"Save new session"}><div className="row between"><div className="min-w-0"><span className="eyebrow-extension">{park?"Clear the workspace":"Capture context"}</span><h2 className="section-title">{park?"Park selected tabs":"Save new session"}</h2></div><button className="icon-button" aria-label="Cancel" onClick={onCancel}><X size={18}/></button></div><label className="field">Session name<input autoFocus className="input" value={name} maxLength={MAX_SESSION_NAME_LENGTH} onChange={(event)=>setName(event.target.value)} placeholder="e.g. Product research"/></label>{busy&&!tabs.length?<p className="muted"><Loader2 className="inline size-4 animate-spin"/> Reading this window's tabs...</p>:<div className="tabs">{tabs.map(tab=><TabPickerRow key={tab.tabId} tab={tab} checked={selected.includes(tab.tabId)} onChange={()=>setSelected(current=>current.includes(tab.tabId)?current.filter(id=>id!==tab.tabId):[...current,tab.tabId])}/>)}</div>}<div className="row between"><span className="tiny">{selected.length} tab{selected.length===1?"":"s"} selected</span><button className="text-button" onClick={()=>setSelected(selected.length===tabs.length?[]:tabs.map(tab=>tab.tabId))}>{selected.length===tabs.length?"Clear":"Select all"}</button></div>{error&&<div className="notice error" role="alert">{error}</div>}<button className="btn" disabled={busy||!name.trim()||!selected.length} onClick={submit}>{busy?<Loader2 className="size-4 animate-spin"/>:park?"Save & close tabs":"Save session"}</button></section>
+}

@@ -1,0 +1,11 @@
+import { defineConfig } from "@playwright/test"
+
+export default defineConfig({
+  testDir: "./e2e",
+  timeout: 90_000,
+  fullyParallel: false,
+  workers: 1,
+  outputDir: "test-artifacts/results",
+  reporter: [["html", { open: "never", outputFolder: "test-artifacts/report" }], ["list"]],
+  use: { trace: "retain-on-failure", screenshot: "only-on-failure" }
+})
